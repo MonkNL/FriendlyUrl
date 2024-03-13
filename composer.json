@@ -1,0 +1,17 @@
+{
+    "name": "monknk/friendlyurl",
+    "type": "package",
+    "license": "none",
+    "autoload": {
+        "psr-4": {
+            "Monknk\\Friendlyurl\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "thomasvv.nk"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}
+}
