@@ -1,5 +1,5 @@
 <?php
-Class page{
+Class Page{
 	public 	$pageTitle, 
 		$menuTitle, 
 		$capability,  
