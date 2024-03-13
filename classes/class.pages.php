@@ -1,17 +1,17 @@
 <?php
 class Pages{
 
-	private array $pages = [];
-	private static $instance = null;
+	private array $pages 		= [];
+	private static $instance 	= null;
 	private $request;
-	private $currentPage = null;
-	private $modules 		= [];
-
+	private $currentPage 		= null;
+	private $modules 			= [];
+	private $capabilityCallback = null;
 	private function __construct() {
 		$this->modules_autoload();
 
 		$this->request  	= substr(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH),1);
-		$this->currentPage = $this->getPageByRegex($this->request);
+		$this->currentPage	= $this->getPageByRegex($this->request);
 
 	}
 	public static function getInstance(): object{
@@ -86,15 +86,24 @@ class Pages{
 		}
 		return false;
 	}
-
+	private function checkCapability($capablility){
+		if(empty($capablility)){
+			return true;
+		}
+		if(!is_callable($this->capabilityCallback)){
+			return true;
+		}
+		$answer = call_user_func($this->capabilityCallback,$capablility);
+		return is_bool($answer)?$answer:true; 
+	}
 	private function addPage(
 		string 			$pageTitle,
-		string 			$menuTitle,
-		array|string 	$capability,
 		string 			$pageSlug,
-		callable 		$callback = null,
-		int|float 		$priority = null,
-		bool 			$inMenu = false,
+		callable 		$callback 	= null,
+		array|string 	$capability,
+		?string 		$menuTitle 	= null,
+		int|float 		$priority 	= null,
+		bool 			$inMenu 	= false,
 		?string 		$parentSlug = null
 	) {
 		$this->pages[] = new Page(
@@ -115,17 +124,6 @@ class Pages{
 	private function getsubPages($slug){
 		//print_r(array_column($this->pages,'parentSlug'));
 	}
-	
-	private function addMenuPage(){
-		$args = func_get_args(); $args['inMenu'] = true;
-		return call_user_func_array([$this,'addPage'],$args);
-	}
-	private function addSubmenuPage(){
-		$args = func_get_args();$args['inMenu'] = true;
-		return call_user_func_array([$this,'addSubPage'],$args);
-	}
-
-	private $traceBack;
 	private function getMenu($parentSlug = '',$parent = []){
 		$user = CurrentUser::Get();
 		$matches = array_keys(array_column($this->pages,'parentSlug'),$parentSlug);
@@ -138,7 +136,7 @@ class Pages{
 			if($page->inMenu == false){
 				continue;
 			}
-			if(is_array($page->capability) && !call_user_func_array([CurrentUser::get(),'hasAuthorization'],$page->capability)){
+			if(is_array($page->capability) && $this->checkCapability($page->capability))){
 				continue;
 			}
 			$childPages	= [];
@@ -197,13 +195,13 @@ class Pages{
 		bool 			$inMenu = false
 	) {
 		$arguments = [
-			'pageTitle' => $pageTitle,
-			'menuTitle' => $menuTitle,
-			'capability' => $capability,
-			'pageSlug' => $pageSlug,
-			'callback' => $callback,
-			'priority' => $priority,
-			'inMenu' => $inMenu,
+			'pageTitle' 	=> $pageTitle,
+			'menuTitle' 	=> $menuTitle,
+			'capability' 	=> $capability,
+			'pageSlug' 		=> $pageSlug,
+			'callback' 		=> $callback,
+			'priority' 		=> $priority,
+			'inMenu' 		=> $inMenu,
 		];
 	
 		return call_user_func_array([self::getInstance(), 'addPage'], $arguments);
