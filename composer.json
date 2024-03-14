@@ -7,7 +7,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Monknk\\Friendlyurl\\": "src/"
+            "Monknl\\Friendlyurl\\": "src/"
         }
     },
     "authors": [
