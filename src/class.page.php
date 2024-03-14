@@ -1,4 +1,5 @@
 <?php
+namepsace MonkNL/FriendlyUrl;
 Class Page{
 	public 	$pageTitle, 
 		$menuTitle, 
