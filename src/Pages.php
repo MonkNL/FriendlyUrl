@@ -37,7 +37,7 @@ class Pages{
 		try{
 		
 			if(!($page = $this->getPageByRegex($this->request))){
-				throw new Exception('404');
+				throw new \Exception('404');
 			}
 			$this->runCallback($page->callback);
 		}catch(Exception $e){
