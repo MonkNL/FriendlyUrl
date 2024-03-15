@@ -1,4 +1,5 @@
 <?php
+namepsace MonkNL/FriendlyUrl;
 class Pages{
 
 	private array $pages 		= [];
