@@ -137,7 +137,7 @@ class Pages{
 			if($page->inMenu == false){
 				continue;
 			}
-			if(is_array($page->capability) && $this->checkCapability($page->capability))){
+			if(is_array($page->capability) && $this->checkCapability($page->capability)){
 				continue;
 			}
 			$childPages	= [];
