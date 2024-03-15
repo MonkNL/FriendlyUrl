@@ -1,5 +1,5 @@
 <?php
-namepsace MonkNL/FriendlyUrl;
+namespace MonkNL/FriendlyUrl;
 /**
  * Class Hooks
  *
