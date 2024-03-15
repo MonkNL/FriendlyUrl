@@ -115,7 +115,7 @@ class Pages{
 			callback: 		$callback,
 			priority: 		$priority,
 			inMenu: 		$inMenu,
-			$parentSlug: 	$parentSlug
+			parentSlug: 	$parentSlug
 		);
 	}
 	private function getPages(){
