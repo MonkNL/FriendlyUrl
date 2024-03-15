@@ -1,5 +1,5 @@
 <?php
-namespace MonkNL\FriendlyUrl;
+namespace FriendlyURL;
 class Pages{
 
 	private array $pages 		= [];

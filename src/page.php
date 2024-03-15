@@ -1,5 +1,5 @@
 <?php
-namespace MonkNL\FriendlyUrl;
+namespace FriendlyURL;
 Class Page{
 	public 	$pageTitle, 
 		$menuTitle, 
