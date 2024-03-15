@@ -21,9 +21,9 @@ Class Page{
 			array|string $capability, 
 			string $pageSlug, 
 			callable $callback = null, 
-			int|float $priority = 10,
+			?int|float $priority = 10,
 			bool $inMenu = false,
-			$parentSlug = null
+			?string $parentSlug = null
 		) {
 		$this->pageTitle	= $pageTitle; 
 		$this->menuTitle	= $menuTitle; 
