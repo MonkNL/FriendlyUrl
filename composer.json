@@ -10,7 +10,7 @@
         "psr-4": {
             "FriendlyURL\\": "src/"
         },
-        "classmap": ["classes/"]
+        "classmap": ["Classes/"]
     },
     "authors": [
         {
