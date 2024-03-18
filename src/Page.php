@@ -21,7 +21,7 @@ Class Page{
 			array|string $capability, 
 			string $pageSlug, 
 			callable $callback = null, 
-			?int|float $priority = 10,
+			?int $priority = 10,
 			bool $inMenu = false,
 			?string $parentSlug = null
 		) {
