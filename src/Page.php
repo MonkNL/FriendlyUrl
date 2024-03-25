@@ -44,7 +44,7 @@ Class Page{
 	}
 	public function setSlug(string $slug): void{
 		$this->slug = $slug;
-		$slug 				= (substr($pageSlug,-1)=='/'?substr($pageSlug,0,-1):$pageSlug);
+		$slug 				= (substr($slug,-1)=='/'?substr($slug,0,-1):$slug);
 		$regex		= '/^'.str_replace('/','\/',$slug).'\/?$/'; // ^ = start, $ = end, \/? = 0 or 1 /
 		$this->setRegex($regex);
 	}
@@ -57,10 +57,10 @@ Class Page{
 	public function setPriority(?int $priority){
 		$this->priority		= $priority;
 	}
-	public function setInMenu(){
+	public function setInMenu(bool $inMenu){
 		$this->inMenu		= $inMenu;
 	}
-	public function setparentSlug(string $slug):void{
+	public function setparentSlug(?string $slug):void{
 		$this->parentSlug 	= $parentSlug;
 	}
 	public function setRegexvariables($matches){
