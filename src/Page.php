@@ -33,34 +33,34 @@ Class Page{
 		$this->setInMenu($inMenu);
 		$this->setParentSlug($parentSlug);
 	}
-	public setTitle(string $title): void{
+	public function setTitle(string $title): void{
 		$this->title = $title;
 	}
-	public setMenuTitle(string $title): void{
+	public function setMenuTitle(string $title): void{
 		$this->menuTitle = $title;
 	}
-	public setCapability(string|array $capability): void{
+	public function setCapability(string|array $capability): void{
 		$this->capability = $capability;
 	}
-	public setSlug(string $slug): void{
+	public function setSlug(string $slug): void{
 		$this->slug = $slug;
 		$slug 				= (substr($pageSlug,-1)=='/'?substr($pageSlug,0,-1):$pageSlug);
 		$regex		= '/^'.str_replace('/','\/',$slug).'\/?$/'; // ^ = start, $ = end, \/? = 0 or 1 /
 		$this->setRegex($regex);
 	}
-	private setRegex(string $regex) :void{
+	private function setRegex(string $regex) :void{
 		$this->regex = $regex;
 	}
-	public setCallback(callable $callback){
+	public function setCallback(callable $callback){
 		$this->callback = $callback;
 	}
-	public setPriority(?int $priority){
+	public function setPriority(?int $priority){
 		$this->priority		= $priority;
 	}
-	public setInMenu(){
+	public function setInMenu(){
 		$this->inMenu		= $inMenu;
 	}
-	public setparentSlug(string $slug):void{
+	public function setparentSlug(string $slug):void{
 		$this->parentSlug 	= $parentSlug;
 	}
 	public function setRegexvariables($matches){
