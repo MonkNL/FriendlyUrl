@@ -61,7 +61,7 @@ Class Page{
 		$this->inMenu		= $inMenu;
 	}
 	public function setparentSlug(?string $slug):void{
-		$this->parentSlug 	= $parentSlug;
+		$this->parentSlug 	= $slug;
 	}
 	public function setRegexvariables($matches){
 		$this->regexVariables = $matches;
