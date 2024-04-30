@@ -185,7 +185,7 @@ class Pages{
 		return call_user_func_array([self::getInstance(),'currentPage'],[]);
 	}
 	static function add_page(
-		string 			$pageTitle,
+		string 			$title,
 		string 			$menuTitle,
 		array|string	$capability,
 		string 			$slug,
@@ -236,7 +236,7 @@ class Pages{
 		return call_user_func_array([self::getInstance(),'getsubPages'],func_get_args());
 	}
 	static function add_menu_page(
-		string 			$pageTitle, 
+		string 			$title, 
 		string 			$menuTitle, 
 		array|string 	$capability, 
 		string 			$slug, 
@@ -244,7 +244,7 @@ class Pages{
 		?int 			$priority = null 
 	){
 		$arguments = [
-			'pageTitle' 	=> $pageTitle,
+			'title' 		=> $title,
 			'menuTitle' 	=> $menuTitle,
 			'capability' 	=> $capability,
 			'slug' 			=> $slug,
@@ -257,7 +257,7 @@ class Pages{
 	}
 	static function add_submenu_page(
 		string 			$parentSlug, 
-		string 			$pageTitle, 
+		string 			$title, 
 		string 			$menuTitle, 
 		array|string 	$capability, 
 		string 			$slug, 
@@ -266,7 +266,7 @@ class Pages{
 	){
 		$arguments = [
 			'parentSlug'	=> $parentSlug,
-			'pageTitle' 	=> $pageTitle,
+			'title' 		=> $title,
 			'menuTitle' 	=> $menuTitle,
 			'capability' 	=> $capability,
 			'slug' 			=> $slug,
