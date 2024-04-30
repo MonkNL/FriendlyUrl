@@ -51,8 +51,6 @@ class Pages{
 		$e->getLine();                    // Source line
 		$e->getTrace();                   // An array of the backtrace()
 		$e->getTraceAsString(); 
-		//echo json_encode($e);
-		//exit;
 
 		echo json_encode([
 				'success' 				=> false,
@@ -80,8 +78,8 @@ class Pages{
 	}
 
 	private function getPageBySlug($needle): bool | object{
-		$pageSlugs 	= array_column($this->pages,'pageSlug');
-		$key 		= array_search($needle,$pageSlugs);
+		$slugs 	= array_column($this->pages,'slug');
+		$key 		= array_search($needle,$slugs);
 		if(is_int($key) || is_string($key)){
 			return $this->pages[$key];
 		}
@@ -98,8 +96,8 @@ class Pages{
 		return is_bool($answer)?$answer:true; 
 	}
 	private function addPage(
-		string 			$pageTitle,
-		string 			$pageSlug,
+		string 			$title,
+		string 			$slug,
 		callable 		$callback 	= null,
 		array|string 	$capability,
 		?string 		$menuTitle 	= null,
@@ -108,10 +106,10 @@ class Pages{
 		?string 		$parentSlug = null
 	) {
 		$this->pages[] = new Page(
-			pageTitle: 		$pageTitle,
+			title: 			$title,
 			menuTitle: 		$menuTitle,
 			capability: 	$capability,
-			pageSlug: 		$pageSlug,
+			slug: 			$slug,
 			callback: 		$callback,
 			priority: 		$priority,
 			inMenu: 		$inMenu,
@@ -141,8 +139,8 @@ class Pages{
 				continue;
 			}
 			$childPages	= [];
-			if(!empty($page->pageSlug)){ 
-				$childPages = $this->getMenu($page->pageSlug,$page );
+			if(!empty($page->slug)){ 
+				$childPages = $this->getMenu($page->slug,$page );
 				usort($childPages, function ($a, $b) {return $a->priority <=> $b->priority;});
 			}
 			$page->childPages = $childPages;
@@ -190,16 +188,16 @@ class Pages{
 		string 			$pageTitle,
 		string 			$menuTitle,
 		array|string	$capability,
-		string 			$pageSlug,
+		string 			$slug,
 		callable 		$callback = null,
 		int|float 		$priority = null,
 		bool 			$inMenu = false
 	) {
 		$arguments = [
-			'pageTitle' 	=> $pageTitle,
+			'title' 		=> $title,
 			'menuTitle' 	=> $menuTitle,
 			'capability' 	=> $capability,
-			'pageSlug' 		=> $pageSlug,
+			'slug' 			=> $slug,
 			'callback' 		=> $callback,
 			'priority' 		=> $priority,
 			'inMenu' 		=> $inMenu,
@@ -209,19 +207,19 @@ class Pages{
 	}
 	static function add_sub_page(
 		string 			$parentSlug,
-		string 			$pageTitle,
+		string 			$title,
 		string 			$menuTitle,
 		array|string 	$capability,
-		string 			$pageSlug,
+		string 			$slug,
 		callable 		$callback = null,
 		int|float 		$priority = null,
 		bool 			$inMenu = false
 	) {
 		$arguments = [
-			'pageTitle' 	=> $pageTitle,
+			'title' 		=> $title,
 			'menuTitle' 	=> $menuTitle,
 			'capability' 	=> $capability,
-			'pageSlug' 		=> $pageSlug,
+			'slug' 			=> $slug,
 			'callback' 		=> $callback,
 			'priority' 		=> $priority,
 			'inMenu' 		=> $inMenu,
@@ -241,7 +239,7 @@ class Pages{
 		string 			$pageTitle, 
 		string 			$menuTitle, 
 		array|string 	$capability, 
-		string 			$pageSlug, 
+		string 			$slug, 
 		?callable 		$callback = null, 
 		?int 			$priority = null 
 	){
@@ -249,7 +247,7 @@ class Pages{
 			'pageTitle' 	=> $pageTitle,
 			'menuTitle' 	=> $menuTitle,
 			'capability' 	=> $capability,
-			'pageSlug' 		=> $pageSlug,
+			'slug' 			=> $slug,
 			'callback' 		=> $callback,
 			'priority' 		=> $priority,
 			'inMenu' 		=> true,
@@ -262,7 +260,7 @@ class Pages{
 		string 			$pageTitle, 
 		string 			$menuTitle, 
 		array|string 	$capability, 
-		string 			$pageSlug, 
+		string 			$slug, 
 		?callable 		$callback = null, 
 		?int 			$priority= null
 	){
@@ -271,7 +269,7 @@ class Pages{
 			'pageTitle' 	=> $pageTitle,
 			'menuTitle' 	=> $menuTitle,
 			'capability' 	=> $capability,
-			'pageSlug' 		=> $pageSlug,
+			'slug' 			=> $slug,
 			'callback' 		=> $callback,
 			'priority' 		=> $priority,
 			'inMenu' 		=> true,

@@ -4,7 +4,7 @@ Class Page{
 	public 	$pageTitle, 
 		$menuTitle, 
 		$capability,  
-		$pageSlug 		= '',
+		$slug 			= '',
 		$callback 		= null,
 		$priority 		= 10,
 		$inMenu 		= false,
@@ -18,7 +18,7 @@ Class Page{
 			string 			$pageTitle, 
 			string 			$menuTitle, 
 			array|string 	$capability, 
-			string 			$pageSlug, 
+			string 			$slug, 
 			?callable 		$callback = null, 
 			?int 			$priority = 10,
 			bool 			$inMenu = false,
@@ -27,7 +27,7 @@ Class Page{
 		$this->setTitle($pageTitle); 
 		$this->setmenuTitle($menuTitle); 
 		$this->setcapability($capability); 
-		$this->setSlug($pageSlug);
+		$this->setSlug($slug);
 		$this->setCallback($callback); 
 		$this->setPriority($priority);
 		$this->setInMenu($inMenu);
@@ -44,7 +44,7 @@ Class Page{
 	}
 	public function setSlug(string $slug): void{
 		$this->slug = $slug;
-		$slug 				= (substr($slug,-1)=='/'?substr($slug,0,-1):$slug);
+		$slug 		= (substr($slug,-1)=='/'?substr($slug,0,-1):$slug);
 		$regex		= '/^'.str_replace('/','\/',$slug).'\/?$/'; // ^ = start, $ = end, \/? = 0 or 1 /
 		$this->setRegex($regex);
 	}
@@ -67,7 +67,7 @@ Class Page{
 		$this->regexVariables = $matches;
 	}
 	public function regexSprintF(){
-		return preg_replace('/(\(.*\))/U', '%s', $this->pageSlug);
+		return preg_replace('/(\(.*\))/U', '%s', $this->slug);
 	}
 	public function getSubPages(){
 		return $this->childPages;
