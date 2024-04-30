@@ -1,7 +1,7 @@
 <?php
 namespace FriendlyURL;
 Class Page{
-	public 	$pageTitle, 
+	public 	$title, 
 		$menuTitle, 
 		$capability,  
 		$slug 			= '',
@@ -15,7 +15,7 @@ Class Page{
 		$parent 		= null;	 
 	
 	public function __construct(
-			string 			$pageTitle, 
+			string 			$title, 
 			string 			$menuTitle, 
 			array|string 	$capability, 
 			string 			$slug, 
@@ -24,7 +24,7 @@ Class Page{
 			bool 			$inMenu = false,
 			?string 		$parentSlug = null
 		) {
-		$this->setTitle($pageTitle); 
+		$this->setTitle($title); 
 		$this->setmenuTitle($menuTitle); 
 		$this->setcapability($capability); 
 		$this->setSlug($slug);
