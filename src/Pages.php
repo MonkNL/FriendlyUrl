@@ -16,10 +16,10 @@ class Pages{
 
 	}
 	public static function getInstance(): object{
-        if (!self::$instance ) {
-            self::$instance = new self();
+        if (!isset($GLOBALS['Pages_instance'])) {
+			$GLOBALS['Pages_instance'] = new self();
         }
-        return self::$instance;
+        return $GLOBALS['Pages_instance'];
     }
 	private function getRequest(): string{
 		return $this->request;
