@@ -19,6 +19,7 @@ class Pages{
         if (!isset($GLOBALS['Pages_instance'])) {
 			$GLOBALS['Pages_instance'] = new self();
         }
+		print_r($GLOBALS['Pages_instance']);
         return $GLOBALS['Pages_instance'];
     }
 	private function getRequest(): string{
