@@ -9,7 +9,10 @@
     "autoload": {
         "psr-4": {
             "FriendlyURL\\": "src/"
-        }
+        },
+        "files": [
+            "src/helper_functions.php"
+        ]
     },
     "authors": [
         {
