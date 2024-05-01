@@ -1,5 +1,5 @@
 <?php
-/*namespace FriendlyURL;
+namespace FriendlyURL;
 class Pages{
 
 	private array $pages 		= [];
@@ -40,7 +40,7 @@ class Pages{
 				throw new \Exception('404');
 			}
 			$this->runCallback($page->callback);
-		}catch(Exception $e){
+		}catch(\Exception $e){
 				$this->return_error($e);
 		}
 	}
@@ -284,4 +284,4 @@ class Pages{
 }
 
 
-*/
+
