@@ -1,5 +1,5 @@
 <?php
-namespace FriendlyURL;
+/*namespace FriendlyURL;
 class Pages{
 
 	private array $pages 		= [];
@@ -284,4 +284,4 @@ class Pages{
 }
 
 
-
+*/

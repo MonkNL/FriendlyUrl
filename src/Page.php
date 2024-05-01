@@ -1,5 +1,5 @@
 <?php
-namespace FriendlyURL;
+/*namespace FriendlyURL;
 Class Page{
 	public 	$title, 
 		$menuTitle, 
@@ -80,3 +80,4 @@ Class Page{
 		return !empty($this->getSubMenu());
 	}
 }
+*/
