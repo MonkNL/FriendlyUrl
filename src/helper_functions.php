@@ -18,6 +18,6 @@ function add_page(
 		'inMenu' 		=> $inMenu,
 	];
 
-	return call_user_func_array([FriendlyURL/Pages::getInstance(), 'addPage'], $arguments);
+	return call_user_func_array([FriendlyURL\Pages::getInstance(), 'addPage'], $arguments);
 }
-?>
+?> 
