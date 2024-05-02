@@ -96,7 +96,7 @@ class Pages{
 		$answer = call_user_func($this->capabilityCallback,$capablility);
 		return is_bool($answer)?$answer:true; 
 	}
-	private function addPage(
+	public function addPage(
 		string 			$title,
 		string 			$slug,
 		callable 		$callback 	= null,
