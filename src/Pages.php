@@ -15,9 +15,9 @@ class Pages{
 		$this->currentPage	= $this->getPageByRegex($this->request);
 
 	}
-	public static function getInstance(): object{
-        if (!self::$instance ) {
-            self::$instance = new self();
+	public static function getInstance(): self{
+        if (null === self::$instance) {
+            self::$instance = new static();
         }
         return self::$instance;
     }
@@ -38,6 +38,7 @@ class Pages{
 		
 			if(!($page = $this->getPageByRegex($this->request))){
 				throw new \Exception('404');
+				print_r(debug_traceback());
 			}
 			$this->runCallback($page->callback);
 		}catch(\Exception $e){
