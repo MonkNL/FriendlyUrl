@@ -1,5 +1,5 @@
 <?php
-namespace FriendlyURL;
+/*namespace FriendlyURL;
 class Pages{
 
 	private array $pages 		= [];
@@ -22,6 +22,7 @@ class Pages{
         }
         return self::$instance;
     }
+
 	private function getRequest(): string{
 		return $this->request;
 	}
@@ -287,3 +288,4 @@ class Pages{
 
 
 
+*/

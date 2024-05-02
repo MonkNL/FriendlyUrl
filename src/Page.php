@@ -1,6 +1,6 @@
 <?php
 namespace FriendlyURL;
-Class Page{
+/*Class Page{
 	public 	$title, 
 		$menuTitle, 
 		$capability,  
@@ -79,4 +79,4 @@ Class Page{
 	public function hasSubPages() :bool{
 		return !empty($this->getSubMenu());
 	}
-}
+}*/
