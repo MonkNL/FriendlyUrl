@@ -19,6 +19,7 @@ class Pages{
 	private function __clone(){ }
 	public static function getInstance(): self{
         if (null === self::$instance) {
+			echo gettype(self::$instance)."<br/>";
             static::$instance = new static();
         }
         return self::$instance;
