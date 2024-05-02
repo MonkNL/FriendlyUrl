@@ -15,7 +15,7 @@ class Pages{
 		$this->currentPage	= $this->getPageByRegex($this->request);
 
 	}
-	private function __wakeup(){}
+	public function __wakeup(){}
 	private function __clone(){ }
 	public static function getInstance(): self{
         if (null === self::$instance) {
