@@ -4,7 +4,7 @@ function add_page(
 	string 			$menuTitle,
 	array|string	$capability,
 	string 			$slug,
-	callable 		$callback = null,
+					$callback = null,
 	int|float 		$priority = null,
 	bool 			$inMenu = false
 ) {
