@@ -19,7 +19,7 @@ Class Page{
 			string 			$menuTitle, 
 			array|string 	$capability, 
 			string 			$slug, 
-			?callable 		$callback = null, 
+							$callback = null, 
 			?int 			$priority = 10,
 			bool 			$inMenu = false,
 			?string 		$parentSlug = null
@@ -51,7 +51,7 @@ Class Page{
 	private function setRegex(string $regex) :void{
 		$this->regex = $regex;
 	}
-	public function setCallback(callable $callback){
+	public function setCallback($callback){
 		$this->callback = $callback;
 	}
 	public function setPriority(?int $priority){

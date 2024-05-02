@@ -100,7 +100,7 @@ class Pages{
 	public function addPage(
 		string 			$title,
 		string 			$slug,
-		callable 		$callback 	= null,
+				 		$callback 	= null,
 		array|string 	$capability,
 		?string 		$menuTitle 	= null,
 		int|float 		$priority 	= null,
@@ -191,7 +191,7 @@ class Pages{
 		string 			$menuTitle,
 		array|string	$capability,
 		string 			$slug,
-		callable 		$callback = null,
+						$callback = null,
 		int|float 		$priority = null,
 		bool 			$inMenu = false
 	) {
@@ -213,7 +213,7 @@ class Pages{
 		string 			$menuTitle,
 		array|string 	$capability,
 		string 			$slug,
-		callable 		$callback = null,
+						$callback = null,
 		int|float 		$priority = null,
 		bool 			$inMenu = false
 	) {
@@ -242,7 +242,7 @@ class Pages{
 		string 			$menuTitle, 
 		array|string 	$capability, 
 		string 			$slug, 
-		?callable 		$callback = null, 
+				 		$callback = null, 
 		?int 			$priority = null 
 	){
 		$arguments = [
@@ -263,7 +263,7 @@ class Pages{
 		string 			$menuTitle, 
 		array|string 	$capability, 
 		string 			$slug, 
-		?callable 		$callback = null, 
+						$callback = null, 
 		?int 			$priority= null
 	){
 		$arguments = [
