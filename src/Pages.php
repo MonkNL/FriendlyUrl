@@ -16,15 +16,9 @@ class Pages{
 
 	}
 	public function __wakeup(){}
-	private function __clone(){ }
-	public static function getInstance(): self{
-		if(defined('FrienlyURLPages') === false){
-			define('FrienlyURLPages',new static());
-		}
-		return FrienlyURLPages;
-        if (null === self::$instance) {
-			echo gettype(self::$instance)."<br/>";
-            static::$instance = new static();
+	public static function getInstance() {
+        if (!isset(self::$instance)) {
+            self::$instance = new static();
         }
         return self::$instance;
     }
