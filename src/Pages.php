@@ -16,6 +16,7 @@ class Pages{
 
 	}
 	public static function getInstance(): self{
+		echo typeof(self::$instance). self::$instance;
         if (null === self::$instance) {
             self::$instance = new static();
         }
