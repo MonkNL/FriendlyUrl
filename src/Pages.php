@@ -1,28 +1,28 @@
 <?php
-/*namespace FriendlyURL;
+namespace FriendlyURL;
 class Pages{
 
 	private array $pages 		= [];
-	private static $instance 	= null;
+	private static $instance;
 	private $request;
 	private $currentPage 		= null;
 	private $modules 			= [];
 	private $capabilityCallback = null;
-	private function __construct() {
+	protected function __construct() {
 		$this->modules_autoload();
 
 		$this->request  	= substr(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH),1);
 		$this->currentPage	= $this->getPageByRegex($this->request);
 
 	}
+	private function __wakeup(){}
+	private function __clone(){ }
 	public static function getInstance(): self{
         if (null === self::$instance) {
-			echo __FUNCTION__;
-            self::$instance = new self();
+            static::$instance = new static();
         }
         return self::$instance;
     }
-
 	private function getRequest(): string{
 		return $this->request;
 	}
@@ -288,4 +288,3 @@ class Pages{
 
 
 
-*/
