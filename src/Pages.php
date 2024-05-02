@@ -16,7 +16,7 @@ class Pages{
 
 	}
 	public static function getInstance(): self{
-        if (null === gettype(self::$instance)) {
+        if (null === self::$instance) {
 			echo __FUNCTION__;
             self::$instance = new self();
         }
