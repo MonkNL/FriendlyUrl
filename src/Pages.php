@@ -18,7 +18,7 @@ class Pages{
 	public function __wakeup(){}
 	private function __clone(){ }
 	public static function getInstance(): self{
-		if(!isset(FrienlyURLPages)){
+		if(defined('FrienlyURLPages') === false){
 			define('FrienlyURLPages',new static());
 		}
 		return FrienlyURLPages;
