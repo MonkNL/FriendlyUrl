@@ -36,9 +36,12 @@ class Pages {
 
 	private 		function modules_autoload(): void{ // auto load all route modules, dir and constructor need to have the same name
 		foreach(glob('modules/**/') as $dir){
-			if(file_exists($dir.basename($dir).'.php')){
-				include_once($dir.basename($dir).'.php');
-				$this->modules[] = basename($dir);
+			$module = basename($dir);
+			if(file_exists($dir.$module.'.php')){
+				include_once($dir.$module.'.php');
+				$this->modules[] = $module;
+				echo `<h1>{$module}</h1`;
+				print_r($GLOBALS);
 			}
 		}
 	}
