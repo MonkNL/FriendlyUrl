@@ -40,13 +40,13 @@ class Pages {
 		foreach(glob('modules/**/') as $dir){
 	
 			$module = basename($dir);
-			echo $dir.$module.'.php';
+			
 			if(file_exists($dir.$module.'.php')){
 				include_once($dir.$module.'.php');
 				$this->modules[] = $module;
-				echo "<h1>{$module}</h1>";
-				print_r($GLOBALS);
+				
 			}
+			print_r($this->$pages);
 		}
 	}
 	private function runPages(){
