@@ -1,6 +1,7 @@
 <?php
 namespace FriendlyURL;
-class Pages{
+
+class Pages {
 
 	private array $pages 		= [];
 	private static $instance;
@@ -8,25 +9,32 @@ class Pages{
 	private $currentPage 		= null;
 	private $modules 			= [];
 	private $capabilityCallback = null;
-	protected function __construct() {
-		$this->modules_autoload();
+	
+	protected 		function __construct() {	}
+	public 			function __wakeup(){}
+	/*public static 	function getInstance(): static{
+        if (static::$instance === null) {
+            static::$instance = new static;
+			$instance->modules_autoload();
+        }
 
-		$this->request  	= substr(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH),1);
-		$this->currentPage	= $this->getPageByRegex($this->request);
-
-	}
-	public function __wakeup(){}
-	public static function getInstance() {
+        return static::$instance;
+    }*/
+	
+	public static 	function getInstance() {
+		
         if (!isset(self::$instance)) {
-            self::$instance = new static();
+            self::$instance 	= new static();
+			$this->request  	= substr(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH),1);
+			$this->currentPage	= $this->getPageByRegex($this->request);
         }
         return self::$instance;
     }
-	private function getRequest(): string{
+	private 		function getRequest(): string{
 		return $this->request;
 	}
 
-	private function modules_autoload(): void{ // auto load all route modules, dir and constructor need to have the same name
+	private 		function modules_autoload(): void{ // auto load all route modules, dir and constructor need to have the same name
 		foreach(glob('modules/**/') as $dir){
 			if(file_exists($dir.basename($dir).'.php')){
 				include_once($dir.basename($dir).'.php');
@@ -34,19 +42,20 @@ class Pages{
 			}
 		}
 	}
-	public function __destruct(){
+	private function runPages(){
+		$this->modules_autoload();
 		try{
 		
 			if(!($page = $this->getPageByRegex($this->request))){
 				throw new \Exception('404');
-				print_r(debug_traceback());
+
 			}
 			$this->runCallback($page->callback);
 		}catch(\Exception $e){
 				$this->return_error($e);
 		}
 	}
-	private function return_error($e){
+	private function return_error($e): string{
 		$e->getMessage();                 // Exception message
 		$e->getCode();                    // User-defined Exception code
 		$e->getFile();                    // Source filename
@@ -185,6 +194,9 @@ class Pages{
 	}
 	static function current(){
 		return call_user_func_array([self::getInstance(),'currentPage'],[]);
+	}
+	static function current(){
+		return call_user_func_array([self::getInstance(),'runPages'],[]);
 	}
 	static function add_page(
 		string 			$title,
