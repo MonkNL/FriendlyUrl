@@ -28,7 +28,7 @@ class Pages {
 			self::$instance->modules_autoload();
 			self::$instance->request  	= substr(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH),1);
 			self::$instance->currentPage	= self::$instance->getPageByRegex(self::$instance->request);
-			
+			print_r(self::$instance->pages);
         }
         return self::$instance;
     }
@@ -40,13 +40,11 @@ class Pages {
 		foreach(glob('modules/**/') as $dir){
 	
 			$module = basename($dir);
-			
 			if(file_exists($dir.$module.'.php')){
 				include_once($dir.$module.'.php');
 				$this->modules[] = $module;
 				
 			}
-			print_r($this->pages);
 		}
 	}
 	private function runPages(){
