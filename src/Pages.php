@@ -48,7 +48,6 @@ class Pages {
 	}
 	private function runPages(){
 	}
-	public function __destruct(){
 		try{
 		
 			if(!($page = $this->getPageByRegex($this->request))){
@@ -60,7 +59,7 @@ class Pages {
 				$this->return_error($e);
 		}
 	}
-	private function return_error($e): string{
+	private function return_error($e){
 		$e->getMessage();                 // Exception message
 		$e->getCode();                    // User-defined Exception code
 		$e->getFile();                    // Source filename
