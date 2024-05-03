@@ -28,7 +28,6 @@ class Pages {
 			self::$instance->modules_autoload();
 			self::$instance->request  	= substr(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH),1);
 			self::$instance->currentPage	= self::$instance->getPageByRegex(self::$instance->request);
-			print_r(self::$instance->pages);
         }
         return self::$instance;
     }
@@ -48,6 +47,8 @@ class Pages {
 		}
 	}
 	private function runPages(){
+	}
+	public function __destruct(){
 		try{
 		
 			if(!($page = $this->getPageByRegex($this->request))){
