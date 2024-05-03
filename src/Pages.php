@@ -25,8 +25,10 @@ class Pages {
 		
         if (!isset(self::$instance)) {
             self::$instance 	= new static();
+			self::$instance->modules_autoload();
 			self::$instance->request  	= substr(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH),1);
 			self::$instance->currentPage	= self::$instance->getPageByRegex(self::$instance->request);
+			
         }
         return self::$instance;
     }
