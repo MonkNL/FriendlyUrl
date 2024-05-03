@@ -25,8 +25,8 @@ class Pages {
 		
         if (!isset(self::$instance)) {
             self::$instance 	= new static();
-			$this->request  	= substr(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH),1);
-			$this->currentPage	= $this->getPageByRegex($this->request);
+			self::$instance->request  	= substr(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH),1);
+			self::$instance->currentPage	= $this->getPageByRegex($this->request);
         }
         return self::$instance;
     }
