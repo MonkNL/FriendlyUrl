@@ -40,7 +40,7 @@ class Pages {
 			if(file_exists($dir.$module.'.php')){
 				include_once($dir.$module.'.php');
 				$this->modules[] = $module;
-				echo `<h1>{$module}</h1`;
+				echo `<h1>{$module}</h1>`;
 				print_r($GLOBALS);
 			}
 		}
