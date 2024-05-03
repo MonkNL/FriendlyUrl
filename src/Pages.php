@@ -46,7 +46,7 @@ class Pages {
 				$this->modules[] = $module;
 				
 			}
-			print_r($this->$pages);
+			print_r($this->pages);
 		}
 	}
 	private function runPages(){
