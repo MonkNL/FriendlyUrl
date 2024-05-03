@@ -9,7 +9,7 @@ class Pages {
 	private $currentPage 		= null;
 	private $modules 			= [];
 	private $capabilityCallback = null;
-	
+
 	protected 		function __construct() {	}
 	public 			function __wakeup(){}
 	/*public static 	function getInstance(): static{
@@ -43,7 +43,6 @@ class Pages {
 		}
 	}
 	private function runPages(){
-		$this->modules_autoload();
 		try{
 		
 			if(!($page = $this->getPageByRegex($this->request))){
@@ -195,7 +194,7 @@ class Pages {
 	static function current(){
 		return call_user_func_array([self::getInstance(),'currentPage'],[]);
 	}
-	static function current(){
+	static function run(){
 		return call_user_func_array([self::getInstance(),'runPages'],[]);
 	}
 	static function add_page(
