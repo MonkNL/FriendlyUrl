@@ -5,11 +5,12 @@ class Pages {
 
 	private array $pages 		= [];
 	private static $instance;
+	private static $autoloaded;
 	private $request;
 	private $currentPage 		= null;
 	private $modules 			= [];
 	private $capabilityCallback = null;
-	private $autoloaded			= false;
+	
 
 	protected 		function __construct() {	}
 	public 			function __wakeup(){}
@@ -28,7 +29,7 @@ class Pages {
             self::$instance 	= new static();
 			return self::$instance;
         }
-		if(self::$autoloaded == false){
+		if(!isset(self::$autoloaded)){
 			self::$autoloaded = true;
 			self::$instance->modules_autoload();
 			self::$instance->request  	= substr(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH),1);
