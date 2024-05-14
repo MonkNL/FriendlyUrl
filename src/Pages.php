@@ -6,22 +6,15 @@ class Pages {
 	private array $pages 		= [];
 	private static $instance;
 	private static $autoloaded;
+	private static $classChecks	= [];
 	private $request;
 	private $currentPage 		= null;
 	private $modules 			= [];
 	private $capabilityCallback = null;
 	
 
-	protected 		function __construct() {	}
+	protected 		function __construct() {}
 	public 			function __wakeup(){}
-	/*public static 	function getInstance(): static{
-        if (static::$instance === null) {
-            static::$instance = new static;
-			$instance->modules_autoload();
-        }
-
-        return static::$instance;
-    }*/
 	
 	public static 	function getInstance() {
 		
@@ -29,8 +22,8 @@ class Pages {
             self::$instance 	= new static();
 			return self::$instance;
         }
-		if(!isset(self::$autoloaded)){
-			self::$autoloaded = true;
+		if(!in_array('autoloaded',self::$classChecks)){
+			self::$classChecks[] =  'autoloaded';
 			self::$instance->modules_autoload();
 			self::$instance->request  	= substr(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH),1);
 			self::$instance->currentPage	= self::$instance->getPageByRegex(self::$instance->request);
@@ -53,6 +46,12 @@ class Pages {
 		}
 	}
 	private function __destruct(){
+		if(!in_array('ran',self::$classChecks)){
+			$this->runPages();
+		}
+	}
+	private function runPages(){
+		self::$classChecks[] =  'ran';
 		try{
 		
 			if(!($page = $this->getPageByRegex($this->request))){
@@ -206,7 +205,7 @@ class Pages {
 		return call_user_func_array([self::getInstance(),'currentPage'],[]);
 	}
 	static function run(){
-		//return call_user_func_array([self::getInstance(),'runPages'],[]);
+		return call_user_func_array([self::getInstance(),'runPages'],[]);
 	}
 	static function add_page(
 		string 			$title,
