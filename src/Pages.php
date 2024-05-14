@@ -9,6 +9,7 @@ class Pages {
 	private $currentPage 		= null;
 	private $modules 			= [];
 	private $capabilityCallback = null;
+	private $autoloaded			= false;
 
 	protected 		function __construct() {	}
 	public 			function __wakeup(){}
@@ -25,10 +26,14 @@ class Pages {
 		
         if (!isset(self::$instance)) {
             self::$instance 	= new static();
+			return self::$instance;
+        }
+		if(self::$autoloaded == false){
+			self::$autoloaded = true;
 			self::$instance->modules_autoload();
 			self::$instance->request  	= substr(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH),1);
 			self::$instance->currentPage	= self::$instance->getPageByRegex(self::$instance->request);
-        }
+		}
         return self::$instance;
     }
 	private 		function getRequest(): string{
