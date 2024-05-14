@@ -52,7 +52,6 @@ class Pages {
 		}
 	}
 	private function runPages(){
-	}
 		try{
 		
 			if(!($page = $this->getPageByRegex($this->request))){
