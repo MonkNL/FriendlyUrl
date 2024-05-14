@@ -45,7 +45,7 @@ class Pages {
 			}
 		}
 	}
-	private function __destruct(){
+	function __destruct(){
 		if(!in_array('ran',self::$classChecks)){
 			$this->runPages();
 		}
