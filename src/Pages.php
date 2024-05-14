@@ -52,7 +52,7 @@ class Pages {
 			}
 		}
 	}
-	private function runPages(){
+	private function __destruct(){
 		try{
 		
 			if(!($page = $this->getPageByRegex($this->request))){
@@ -206,7 +206,7 @@ class Pages {
 		return call_user_func_array([self::getInstance(),'currentPage'],[]);
 	}
 	static function run(){
-		return call_user_func_array([self::getInstance(),'runPages'],[]);
+		//return call_user_func_array([self::getInstance(),'runPages'],[]);
 	}
 	static function add_page(
 		string 			$title,
