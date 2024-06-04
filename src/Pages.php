@@ -140,9 +140,6 @@ class Pages {
 		usort($this->pages, function ($a, $b) {return $a->priority <=> $b->priority;});
 		return $this->pages;
 	}
-	private function getsubPages($slug){
-		//print_r(array_column($this->pages,'parentSlug'));
-	}
 	private function getMenu($parentSlug = '',$parent = []){
 		$user = CurrentUser::Get();
 		$matches = array_keys(array_column($this->pages,'parentSlug'),$parentSlug);

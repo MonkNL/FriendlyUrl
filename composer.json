@@ -2,17 +2,14 @@
     "name": "monknl/friendlyurl",
     "type": "package",
     "license": "none",
-    "version": "0.3.2",
+    "version": "0.0.1",
     "require": {
         "php": "^8.0"
     },
     "autoload": {
         "psr-4": {
             "FriendlyURL\\": "src/"
-        },
-        "files": [
-            "src/helper_functions.php"
-        ]
+        }
     },
     "authors": [
         {

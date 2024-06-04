@@ -1,7 +1,7 @@
 <?php
 namespace FriendlyURL;
 Class Page{
-	public 	$title, 
+	private 	$title, 
 		$menuTitle, 
 		$capability,  
 		$slug 			= '',
@@ -36,11 +36,20 @@ Class Page{
 	public function setTitle(string $title): void{
 		$this->title = $title;
 	}
+	public function getTitle():string{
+		return $this->title;
+	}
 	public function setMenuTitle(string $title): void{
 		$this->menuTitle = $title;
 	}
+	public function getMenuTitle():string{
+		return $this->menuTitle;
+	}
 	public function setCapability(string|array $capability): void{
 		$this->capability = $capability;
+	}
+	public function getCapability(): array|string{
+		return $this->capability;
 	}
 	public function setSlug(string $slug): void{
 		$this->slug = $slug;
@@ -48,23 +57,44 @@ Class Page{
 		$regex		= '/^'.str_replace('/','\/',$slug).'\/?$/'; // ^ = start, $ = end, \/? = 0 or 1 /
 		$this->setRegex($regex);
 	}
-	private function setRegex(string $regex) :void{
+	public function getSlug(): string{
+		return $this->slug;
+	}
+	private function setRegex(string $regex): void{
 		$this->regex = $regex;
+	}
+	public function getRegex(): string {
+		return $this->regex;
 	}
 	public function setCallback($callback){
 		$this->callback = $callback;
 	}
+	public function getCallback(){
+		return $this->callback;
+	}
 	public function setPriority(?int $priority){
 		$this->priority		= $priority;
+	}
+	public function getPriority() :?int{
+		return $this->priority;
 	}
 	public function setInMenu(bool $inMenu){
 		$this->inMenu		= $inMenu;
 	}
+	public function getInMenu(): bool{
+		return $this->inMenu;
+	}
 	public function setparentSlug(?string $slug):void{
 		$this->parentSlug 	= $slug;
 	}
+	public function getparentSlug():?string{
+		return $this->parentSlug;
+	
 	public function setRegexvariables($matches){
 		$this->regexVariables = $matches;
+	}
+	public function getRegexvariables(){
+		return $this->regexVariables;
 	}
 	public function regexSprintF(){
 		return preg_replace('/(\(.*\))/U', '%s', $this->slug);
