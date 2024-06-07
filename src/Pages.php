@@ -58,7 +58,7 @@ class Pages {
 				throw new \Exception('404');
 
 			}
-			$this->runCallback($page->callback);
+			$this->runCallback($page->getCallback());
 		}catch(\Exception $e){
 				$this->return_error($e);
 				print_r($this);
