@@ -125,6 +125,7 @@ class Pages {
 		bool 			$inMenu 	= false,
 		?string 		$parentSlug = null
 	) {
+		echo $callback;
 		$this->pages[] = new Page(
 			title: 			$title,
 			menuTitle: 		$menuTitle,
