@@ -190,6 +190,7 @@ class Pages {
 		return $breadCrumbsArray;
 	}
 	private function currentPage(): object{
+		$this->getPageByRegex($this->request);
 		return $this->currentPage;
 	}
 	static function getBreadCrumbs($slug){
