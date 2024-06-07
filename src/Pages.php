@@ -61,7 +61,7 @@ class Pages {
 			$this->runCallback($page->callback);
 		}catch(\Exception $e){
 				$this->return_error($e);
-				print_r($this->modules);
+				print_r($this->$pages);
 		}
 	}
 	private function return_error($e){
