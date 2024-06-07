@@ -87,19 +87,20 @@ class Pages {
 
 
 	private function getPageByRegex($needle): bool | object{
-		$pageRegex = array_column($this->pages,'regex');
-		foreach($pageRegex as  $k => $regex){ 
+		foreach($this->pages as  $page){ 
+			$regex = $page->getRegex();
 			if(preg_match($regex,$needle,$matches) != false){
-					$this->pages[$k]->setRegexVariables($matches);
-					return  $this->pages[$k];
+					$page->setRegexVariables($matches);
+					return  $page;
 			}
 		}
 		return false;
 	}
 
 	private function getPageBySlug($needle): bool | object{
-		$slugs 	= array_column($this->pages,'slug');
-		$key 		= array_search($needle,$slugs);
+		//$slugs 	= array_column($this->pages,'slug');
+		$slugs = array_map(function($page){return $page->getSlug();},$this->pages);
+		$key 	= array_search($needle,$slugs);
 		if(is_int($key) || is_string($key)){
 			return $this->pages[$key];
 		}
@@ -190,7 +191,7 @@ class Pages {
 		}while($this->getParent($slug) != false);
 		return $breadCrumbsArray;
 	}
-	private function currentPage(): object{
+	private function currentPage(): bool | object{
 		$this->currentPage = $this->getPageByRegex($this->request);
 		return $this->currentPage;
 	}
@@ -200,7 +201,7 @@ class Pages {
 	static function request(){
 		return call_user_func_array([self::getInstance(),'getRequest'],[]);
 	}
-	static function current(){
+	static function current(): bool | object{
 		return call_user_func_array([self::getInstance(),'currentPage'],[]);
 	}
 	static function run(){
