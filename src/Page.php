@@ -89,7 +89,7 @@ Class Page{
 	}
 	public function getparentSlug():?string{
 		return $this->parentSlug;
-	
+	}
 	public function setRegexvariables($matches){
 		$this->regexVariables = $matches;
 	}
