@@ -4,24 +4,26 @@ Class Page{
 	private 	$title, 
 		$menuTitle, 
 		$capability,  
-		$slug 					= '',
-		$callback 			= null,
-		$arguments			= [],
-		$priority 			= 10,
-		$inMenu 				= false,
-		$subPages 			= [],
-		$parentSlug 		= null,
-		$regexVariables = [],
-		$regex					='',
-		$parent 				= null;	 
+		$slug 							= '',
+		$callback 					= null,
+		$arguments					= [],
+		$argumentsCallback 	= null,
+		$priority	 					= 10,
+		$inMenu 						= false,
+		$subPages 					= [],
+		$parentSlug 				= null,
+		$regexVariables 		= [],
+		$regex							='',
+		$parent 						= null;	 
 	
 	public function __construct(
 			string 				$title, 
 			string 				$menuTitle, 
 			array|string 	$capability, 
 			string 				$slug, 
-			$callback = null, 
-			$arguments = [],
+			$callback 					= null, 
+			$arguments					 = [],
+			$argumentsCallback 	= null,
 			?int 			$priority = 10,
 			bool 			$inMenu = false,
 			?string 	$parentSlug = null
@@ -31,7 +33,8 @@ Class Page{
 		$this->setcapability($capability); 
 		$this->setSlug($slug);
 		$this->setCallback($callback);
-		$this->setArguments($arguments); 
+		$this->setArguments($arguments);
+		$this->setArgumentsCallback($argumentsCallback);
 		$this->setPriority($priority);
 		$this->setInMenu($inMenu);
 		$this->setParentSlug($parentSlug);
@@ -80,6 +83,12 @@ Class Page{
 	}
 	public function getArguments(){
 		return $this->arguments;
+	}
+	public function setArgumentsCallback($argumentsCallback){
+		$this->argumentsCallback = $argumentsCallback;
+	}
+	public function getArgumentsCallback(){
+		return $this->argumentsCallback;
 	}
 	public function setPriority(?int $priority){
 		$this->priority		= $priority;
