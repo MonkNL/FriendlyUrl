@@ -13,23 +13,22 @@ class Pages {
 	private $capabilityCallback = null;
 	
 
-	protected 		function __construct() {}
-	public 			function __wakeup(){}
+	protected function __construct() {}
+	public		function __wakeup(){}
 	
 	public static 	function getInstance() {
-		
-        if (!isset(self::$instance)) {
-            self::$instance 	= new static();
+		if (!isset(self::$instance)) {
+    	self::$instance 	= new static();
 			return self::$instance;
-        }
+    }
 		if(!in_array('autoloaded',self::$classChecks)){
 			self::$classChecks[] =  'autoloaded';
 			self::$instance->modules_autoload();
 			self::$instance->request  	= substr(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH),1);
 			self::$instance->currentPage	= self::$instance->getPageByRegex(self::$instance->request);
 		}
-        return self::$instance;
-    }
+    return self::$instance;
+  }
 	private 		function getRequest(): string{
 		return $this->request;
 	}
@@ -58,7 +57,7 @@ class Pages {
 				throw new \Exception('404');
 
 			}
-			$this->runCallback($page->getCallback());
+			$this->runCallback($page->getCallback(),$page->getArguments());
 		}catch(\Exception $e){
 				$this->return_error($e);
 				print_r($this);
@@ -81,8 +80,8 @@ class Pages {
 				'trace'					=> $e->getTrace(),
 				]);
 	}
-	private function runCallback(callable $callback){
-		$data = call_user_func($callback,[]);
+	private function runCallback(callable $callback,$arguments = []){
+		$data = call_user_func($callback,$arguments);
 	}
 
 
@@ -119,21 +118,23 @@ class Pages {
 	public function addPage(
 		string 			$title,
 		string 			$slug,
-				 		$callback 	= null,
+		$callback 	= null,
+		$arguments	= [],
 		array|string 	$capability,
-		?string 		$menuTitle 	= null,
+		?string 			$menuTitle 	= null,
 		int|float 		$priority 	= null,
-		bool 			$inMenu 	= false,
-		?string 		$parentSlug = null
+		bool 					$inMenu 	= false,
+		?string 			$parentSlug = null
 	) {
 		$this->pages[] = new Page(
-			title: 			$title,
+			title: 				$title,
 			menuTitle: 		$menuTitle,
 			capability: 	$capability,
-			slug: 			$slug,
+			slug: 				$slug,
 			callback: 		$callback,
+			arguments:		$arguments,
 			priority: 		$priority,
-			inMenu: 		$inMenu,
+			inMenu: 			$inMenu,
 			parentSlug: 	$parentSlug
 		);
 	}
@@ -207,44 +208,48 @@ class Pages {
 		return call_user_func_array([self::getInstance(),'runPages'],[]);
 	}
 	static function add_page(
-		string 			$title,
-		string 			$menuTitle,
+		string 				$title,
+		string 				$menuTitle,
 		array|string	$capability,
-		string 			$slug,
-						$callback = null,
+		string 				$slug,
+		$callback = null,
+		$arguments = [],
 		int|float 		$priority = null,
-		bool 			$inMenu = false
+		bool 					$inMenu = false
 	) {
 		$arguments = [
-			'title' 		=> $title,
+			'title' 			=> $title,
 			'menuTitle' 	=> $menuTitle,
 			'capability' 	=> $capability,
-			'slug' 			=> $slug,
+			'slug' 				=> $slug,
 			'callback' 		=> $callback,
+			'arguments'		=> $arguments,
 			'priority' 		=> $priority,
-			'inMenu' 		=> $inMenu,
+			'inMenu' 			=> $inMenu,
 		];
 	
 		return call_user_func_array([self::getInstance(), 'addPage'], $arguments);
 	}
 	static function add_sub_page(
-		string 			$parentSlug,
-		string 			$title,
-		string 			$menuTitle,
+		string 				$parentSlug,
+		string 				$title,
+		string 				$menuTitle,
 		array|string 	$capability,
-		string 			$slug,
-						$callback = null,
+		string 				$slug,
+		$callback = null,
+		$arguments = [],
 		int|float 		$priority = null,
 		bool 			$inMenu = false
 	) {
 		$arguments = [
-			'title' 		=> $title,
+			'title' 			=> $title,
 			'menuTitle' 	=> $menuTitle,
 			'capability' 	=> $capability,
-			'slug' 			=> $slug,
+			'slug' 				=> $slug,
 			'callback' 		=> $callback,
+			'arguments'		=> $arguments,
 			'priority' 		=> $priority,
-			'inMenu' 		=> $inMenu,
+			'inMenu' 			=> $inMenu,
 			'parentSlug' 	=> $parentSlug,
 		];
 	
@@ -258,43 +263,47 @@ class Pages {
 		return call_user_func_array([self::getInstance(),'getsubPages'],func_get_args());
 	}
 	static function add_menu_page(
-		string 			$title, 
-		string 			$menuTitle, 
+		string 				$title, 
+		string 				$menuTitle, 
 		array|string 	$capability, 
-		string 			$slug, 
-				 		$callback = null, 
-		?int 			$priority = null 
+		string 				$slug, 
+		$callback = null, 
+		$arguments = [],
+		?int 					$priority = null 
 	){
 		$arguments = [
-			'title' 		=> $title,
+			'title' 			=> $title,
 			'menuTitle' 	=> $menuTitle,
 			'capability' 	=> $capability,
-			'slug' 			=> $slug,
+			'slug' 				=> $slug,
 			'callback' 		=> $callback,
+			'arguments'		=> $arguments,
 			'priority' 		=> $priority,
-			'inMenu' 		=> true,
+			'inMenu' 			=> true,
 		];
 	
 		return call_user_func_array([self::getInstance(), 'addPage'], $arguments);
 	}
 	static function add_submenu_page(
-		string 			$parentSlug, 
-		string 			$title, 
-		string 			$menuTitle, 
+		string 				$parentSlug, 
+		string 				$title, 
+		string 				$menuTitle, 
 		array|string 	$capability, 
-		string 			$slug, 
-						$callback = null, 
-		?int 			$priority= null
+		string 				$slug, 
+		$callback = null,
+		$arguments = [],
+		?int 					$priority= null
 	){
 		$arguments = [
 			'parentSlug'	=> $parentSlug,
-			'title' 		=> $title,
+			'title' 			=> $title,
 			'menuTitle' 	=> $menuTitle,
 			'capability' 	=> $capability,
-			'slug' 			=> $slug,
+			'slug' 				=> $slug,
 			'callback' 		=> $callback,
+			'arguments'		=> $arguments,
 			'priority' 		=> $priority,
-			'inMenu' 		=> true,
+			'inMenu' 			=> true,
 		];
 	
 		return call_user_func_array([self::getInstance(), 'addPage'], $arguments);
