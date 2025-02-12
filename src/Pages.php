@@ -57,7 +57,14 @@ class Pages {
 				throw new \Exception('404');
 
 			}
-			$this->runCallback($page->getCallback(),$page->getArguments());
+			$arguments =[];
+			if(is_callable($page->getArgumentsCallback())){
+				$arguments = call_user_func($page->getArgumentsCallback());
+			}
+			if(!is_callable($page->getArgumentsCallback())){
+				$arguments = $page->getArguments();
+			}
+			$this->runCallback($page->getCallback(),$arguments);
 		}catch(\Exception $e){
 				$this->return_error($e);
 				print_r($this);
@@ -118,8 +125,9 @@ class Pages {
 	public function addPage(
 		string 			$title,
 		string 			$slug,
-		$callback 	= null,
-		$arguments	= [],
+		$callback 					= null,
+		$arguments					= [],
+		$argumentsCallback	= null,
 		array|string 	$capability,
 		?string 			$menuTitle 	= null,
 		int|float 		$priority 	= null,
@@ -127,15 +135,16 @@ class Pages {
 		?string 			$parentSlug = null
 	) {
 		$this->pages[] = new Page(
-			title: 				$title,
-			menuTitle: 		$menuTitle,
-			capability: 	$capability,
-			slug: 				$slug,
-			callback: 		$callback,
-			arguments:		$arguments,
-			priority: 		$priority,
-			inMenu: 			$inMenu,
-			parentSlug: 	$parentSlug
+			title: 							$title,
+			menuTitle: 					$menuTitle,
+			capability: 				$capability,
+			slug: 							$slug,
+			callback: 					$callback,
+			arguments:					$arguments,
+			argumentsCallback: 	$argumentsCallback,
+			priority: 					$priority,
+			inMenu: 						$inMenu,
+			parentSlug: 				$parentSlug
 		);
 	}
 	private function getPages(){
@@ -212,20 +221,22 @@ class Pages {
 		string 				$menuTitle,
 		array|string	$capability,
 		string 				$slug,
-		$callback = null,
-		$arguments = [],
+		$callback 					= null,
+		$arguments 					= [],
+		$argumentsCallback	= null,
 		int|float 		$priority = null,
 		bool 					$inMenu = false
 	) {
 		$arguments = [
-			'title' 			=> $title,
-			'menuTitle' 	=> $menuTitle,
-			'capability' 	=> $capability,
-			'slug' 				=> $slug,
-			'callback' 		=> $callback,
-			'arguments'		=> $arguments,
-			'priority' 		=> $priority,
-			'inMenu' 			=> $inMenu,
+			'title' 						=> $title,
+			'menuTitle' 				=> $menuTitle,
+			'capability' 				=> $capability,
+			'slug' 							=> $slug,
+			'callback' 					=> $callback,
+			'arguments'					=> $arguments,
+			'argumentsCallback' => $argumentsCallback,
+			'priority' 					=> $priority,
+			'inMenu' 						=> $inMenu,
 		];
 	
 		return call_user_func_array([self::getInstance(), 'addPage'], $arguments);
@@ -236,21 +247,23 @@ class Pages {
 		string 				$menuTitle,
 		array|string 	$capability,
 		string 				$slug,
-		$callback = null,
-		$arguments = [],
+		$callback 					= null,
+		$arguments 					= [],
+		$argumentsCallback	= null,
 		int|float 		$priority = null,
 		bool 			$inMenu = false
 	) {
 		$arguments = [
-			'title' 			=> $title,
-			'menuTitle' 	=> $menuTitle,
-			'capability' 	=> $capability,
-			'slug' 				=> $slug,
-			'callback' 		=> $callback,
-			'arguments'		=> $arguments,
-			'priority' 		=> $priority,
-			'inMenu' 			=> $inMenu,
-			'parentSlug' 	=> $parentSlug,
+			'title' 						=> $title,
+			'menuTitle' 				=> $menuTitle,
+			'capability' 				=> $capability,
+			'slug' 							=> $slug,
+			'callback' 					=> $callback,
+			'arguments'					=> $arguments,
+			'argumentsCallback' => $argumentsCallback,
+			'priority' 					=> $priority,
+			'inMenu' 						=> $inMenu,
+			'parentSlug'			 	=> $parentSlug,
 		];
 	
 		return call_user_func_array([self::getInstance(), 'addPage'], $arguments);
@@ -267,19 +280,21 @@ class Pages {
 		string 				$menuTitle, 
 		array|string 	$capability, 
 		string 				$slug, 
-		$callback = null, 
-		$arguments = [],
+		$callback 					= null,
+		$arguments 					= [],
+		$argumentsCallback	= null,
 		?int 					$priority = null 
 	){
 		$arguments = [
-			'title' 			=> $title,
-			'menuTitle' 	=> $menuTitle,
-			'capability' 	=> $capability,
-			'slug' 				=> $slug,
-			'callback' 		=> $callback,
-			'arguments'		=> $arguments,
-			'priority' 		=> $priority,
-			'inMenu' 			=> true,
+			'title' 						=> $title,
+			'menuTitle' 				=> $menuTitle,
+			'capability'			 	=> $capability,
+			'slug' 							=> $slug,
+			'callback' 					=> $callback,
+			'arguments'					=> $arguments,
+			'argumentsCallback' => $argumentsCallback,
+			'priority' 					=> $priority,
+			'inMenu' 						=> true,
 		];
 	
 		return call_user_func_array([self::getInstance(), 'addPage'], $arguments);
@@ -290,20 +305,23 @@ class Pages {
 		string 				$menuTitle, 
 		array|string 	$capability, 
 		string 				$slug, 
-		$callback = null,
-		$arguments = [],
+		$callback 					= null,
+		$arguments 					= [],
+		$argumentsCallback	= null,
 		?int 					$priority= null
 	){
 		$arguments = [
-			'parentSlug'	=> $parentSlug,
-			'title' 			=> $title,
-			'menuTitle' 	=> $menuTitle,
-			'capability' 	=> $capability,
-			'slug' 				=> $slug,
-			'callback' 		=> $callback,
-			'arguments'		=> $arguments,
-			'priority' 		=> $priority,
-			'inMenu' 			=> true,
+			'parentSlug'				=> $parentSlug,
+			'title' 						=> $title,
+			'menuTitle' 				=> $menuTitle,
+			'capability'			 	=> $capability,
+			'slug' 							=> $slug,
+			'callback' 					=> $callback,
+			'callback' 					=> $callback,
+			'arguments'					=> $arguments,
+			'argumentsCallback' => $argumentsCallback,
+			'priority' 					=> $priority,
+			'inMenu' 						=> true,
 		];
 	
 		return call_user_func_array([self::getInstance(), 'addPage'], $arguments);
