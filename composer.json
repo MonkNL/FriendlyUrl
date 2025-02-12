@@ -2,7 +2,7 @@
     "name": "monknl/friendlyurl",
     "type": "package",
     "license": "none",
-    "version": "0.0.1",
+    "version": "2025.2.12",
     "require": {
         "php": "^8.0"
     },
