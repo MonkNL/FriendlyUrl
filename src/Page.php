@@ -4,37 +4,37 @@ Class Page{
 	private 	$title, 
 		$menuTitle, 
 		$capability,  
-		$slug 							= '',
-		$callback 					= null,
-		$arguments					= [],
+		$slug 				= '',
+		$callback 			= null,
 		$argumentsCallback 	= null,
-		$priority	 					= 10,
-		$inMenu 						= false,
-		$subPages 					= [],
-		$parentSlug 				= null,
-		$regexVariables 		= [],
-		$regex							='',
-		$parent 						= null;	 
+		$arguments 			= null,
+		$priority 			= 10,
+		$inMenu 			= false,
+		$subPages 			= [],
+		$parentSlug 		= null,
+		$regexVariables 	= [],
+		$regex				='',
+		$parent 			= null;	 
 	
 	public function __construct(
-			string 				$title, 
-			string 				$menuTitle, 
+			string 			$title, 
+			string 			$menuTitle, 
 			array|string 	$capability, 
-			string 				$slug, 
-			$callback 					= null, 
-			$arguments					 = [],
-			$argumentsCallback 	= null,
+			string 			$slug, 
+							$callback = null, 
+							$argumentsCallback 	= null,
+							$arguments 			= null,
 			?int 			$priority = 10,
 			bool 			$inMenu = false,
-			?string 	$parentSlug = null
+			?string 		$parentSlug = null
 		) {
 		$this->setTitle($title); 
 		$this->setmenuTitle($menuTitle); 
 		$this->setcapability($capability); 
 		$this->setSlug($slug);
-		$this->setCallback($callback);
-		$this->setArguments($arguments);
+		$this->setCallback($callback); 
 		$this->setArgumentsCallback($argumentsCallback);
+		$this->setArguments($arguments);
 		$this->setPriority($priority);
 		$this->setInMenu($inMenu);
 		$this->setParentSlug($parentSlug);
@@ -78,17 +78,17 @@ Class Page{
 	public function getCallback(){
 		return $this->callback;
 	}
-	public function setArguments($arguments){
-		$this->arguments = $arguments;
-	}
-	public function getArguments(){
-		return $this->arguments;
-	}
 	public function setArgumentsCallback($argumentsCallback){
 		$this->argumentsCallback = $argumentsCallback;
 	}
 	public function getArgumentsCallback(){
 		return $this->argumentsCallback;
+	}
+	public function setArguments($arguments){
+		$this->arguments = $arguments;
+	}
+	public function getArguments(){
+		return $this->arguments;
 	}
 	public function setPriority(?int $priority){
 		$this->priority		= $priority;
