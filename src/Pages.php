@@ -125,16 +125,6 @@ class PageManager {
 		}
 		return false;
 	}
-	private function checkCapability($capablility){
-		if(empty($capablility)){
-			return true;
-		}
-		if(!is_callable($this->capabilityCallback)){
-			return true;
-		}
-		$answer = call_user_func($this->capabilityCallback,$capablility);
-		return is_bool($answer)?$answer:true; 
-	}
 
 	private function registerPage(Page $page){
 		$this->pages[] = $page;
