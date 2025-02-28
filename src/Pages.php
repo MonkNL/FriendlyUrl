@@ -135,31 +135,7 @@ class PageManager {
 		$answer = call_user_func($this->capabilityCallback,$capablility);
 		return is_bool($answer)?$answer:true; 
 	}
-	public function addPage(
-		string 			$title,
-		string 			$slug,
-				 		$callback 			= null,
-						$argumentsCallback 	= null,
-						$arguments 			= null,
-		array|string 	$capability 		= '',
-		?string 		$menuTitle 			= null,
-		int|float 		$priority 			= null,
-		bool 			$inMenu 			= false,
-		?string 		$parentSlug 		= null
-	) {
-		return $this->registerPage(new Page(
-			title: 				$title,
-			menuTitle: 			$menuTitle,
-			capability: 		$capability,
-			slug: 				$slug,
-			callback: 			$callback,
-			argumentsCallback: 	$argumentsCallback,
-			arguments:			$arguments,
-			priority: 			$priority,
-			inMenu: 			$inMenu,
-			parentSlug: 		$parentSlug
-		));
-	}
+
 	private function registerPage(Page $page){
 		$this->pages[] = $page;
 		return $page;
