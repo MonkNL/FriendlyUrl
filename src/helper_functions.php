@@ -7,7 +7,7 @@ function addPage(
 					$callback = null,
 					$argumentsCallback = null,
 					$arguments = null,
-	?int 			$priority = null,
+	?int 			$priority = 10,
 	bool 			$inMenu = false,
 	string 			$parentSlug = ''
 ) {
@@ -33,7 +33,7 @@ function addSubPage(
 					$callback 			= null,
 					$argumentsCallback 	= null,
 					$arguments 			= null,
-	?int	 			$priority 			= null,
+	?int	 		$priority 			= 10,
 	bool 			$inMenu 			= false
 ) {
 
@@ -58,7 +58,7 @@ function addMenuPage(
 					$callback 			= null,
 					$argumentsCallback 	= null,
 					$arguments 			= null,
-	?int 			$priority = null,
+	int 			$priority = 10,
 	string 			$parentSlug = ''
 ){
 	return addPage(
@@ -83,7 +83,7 @@ function addSubmenuPage(
 					$callback 			= null,
 					$argumentsCallback 	= null,
 					$arguments 			= null,
-	?int 			$priority= null
+	int 			$priority= 10
 ){
 	return addPage(
 		title: 				$title,

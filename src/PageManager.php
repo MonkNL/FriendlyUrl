@@ -3,104 +3,157 @@ namespace FriendlyURL;
 
 class PageManager {
 
-	private array $pages 		= [];
+		/**
+	 * @var array List of registered pages.
+	 */
+	private array $pages = [];
+	
+	/**
+	 * @var self|null Singleton instance.
+	 */
 	private static ?self $instance = null;
+	
+	/**
+	 * @var bool Flag to track if pages have been run.
+	 */
 	private bool $ran = false;
+	
+	/**
+	 * @var string|null Current request URI.
+	 */
 	private $request;
-	private $currentPage 		= null;
-	private $modules 			= [];
+	
+	/**
+	 * @var object|null Current page object.
+	 */
+	private $currentPage = null;
+	
+	/**
+	 * @var array List of loaded modules.
+	 */
+	private $modules = [];
+	
+	/**
+	 * @var callable|null Callback function for capability checks.
+	 */
 	private $capabilityCallback = null;
 	
-
 	/**
-     * Private constructor to enforce singleton pattern.
-     */
-    private function __construct() {
+	 * Private constructor to enforce the singleton pattern.
+	 *
+	 * @throws \Exception If another instance is attempted.
+	 */
+	private function __construct() {
+		if (self::$instance !== null) {
+			throw new \Exception("Cannot create multiple instances of PageManager. Use PageManager::getInstance()");
+		}
+		self::$instance = $this;
 		$this->modules_autoload();
-		$this->request  	= substr(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH),1);
-		$this->currentPage	= $this->getPageByRegex($this->request);
+		$this->request = substr(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), 1);
+		$this->currentPage = $this->getPageByRegex($this->request);
 	}
-	public 			function __wakeup(){}
 	
 	/**
-     * Returns the singleton instance.
-     *
-     * @return self The singleton instance.
-     */
-    public static function getInstance(): self {
-        if (self::$instance === null) {
-            self::$instance = new self();
-        }
+	 * Prevents unserialization of the singleton instance.
+	 */
+	public function __wakeup() {}
+	
+	/**
+	 * Returns the singleton instance.
+	 *
+	 * @return self The singleton instance.
+	 */
+	public static function getInstance(): self {
+		if (self::$instance === null) {
+			self::$instance = new self();
+		}
 		return self::$instance;
-    }
-	private 		function getRequest(): string{
+	}
+	
+	/**
+	 * Retrieves the current request URI.
+	 *
+	 * @return string The request URI.
+	 */
+	private function getRequest(): string {
 		return $this->request;
 	}
-
-	private 		function modules_autoload(): void{ // auto load all route modules, dir and constructor need to have the same name
-		foreach(glob('modules/**/') as $dir){
 	
+	/**
+	 * Auto-loads all route modules. Each directory and file must have the same name.
+	 */
+	private function modules_autoload(): void {
+		foreach (glob('modules/**/') as $dir) {
 			$module = basename($dir);
-			if(file_exists($dir.$module.'.php')){
-				include_once($dir.$module.'.php');
+			if (file_exists($dir . $module . '.php')) {
+				include_once($dir . $module . '.php');
 				$this->modules[] = $module;
-				
 			}
 		}
 	}
-	function __destruct(){
-		if(!$this->ran){
-			$this->runPages();
+	
+	/**
+	 * Destructor to ensure pages are run before destruction.
+	 */
+	function __destruct() {
+		if (!$this->ran) {
+			//$this->runPages();
 		}
 	}
-	private function runPages(){
-		$this->ran =  true;
-		try{
-		
-			if(!($page = $this->getPageByRegex($this->request))){
+	
+	/**
+	 * Runs registered pages.
+	 */
+	private function runPages() {
+		$this->ran = true;
+		try {
+			if (!($page = $this->getPageByRegex($this->request))) {
 				throw new \Exception('404');
-
 			}
-			if($page->getArguments()){
+			if ($page->getArguments()) {
 				$arguments = $page->getArguments();
 			}
-			if(is_callable($page->getArgumentsCallback())){
+			if (is_callable($page->getArgumentsCallback())) {
 				$arguments = call_user_func($page->getArgumentsCallback());
 			}
-			$this->runCallback($page->getCallback(),$arguments??[]);
-		}catch(\Exception $e){
-				$this->return_error($e);
+			$this->runCallback($page->getCallback(), $arguments ?? []);
+		} catch (\Exception $e) {
+			$this->return_error($e);
 		}
 	}
-	private function return_error($e){
-		echo json_encode([
-				'success' 				=> false,
-				'error'   				=> $e->getMessage(),
-				'code'					=> $e->getCode(),
-				'file'					=> basename($e->getFile()),
-				'line'					=> $e->getLine(),
-				'trace'					=> $e->getTrace(),
-				],JSON_PRETTY_PRINT);
+	
+	/**
+	 * Displays an error in JSON format.
+	 *
+	 * @param \Exception $e The exception to display.
+	 */
+	private function return_error($e) {
+		echo '<pre>' . json_encode([
+				'success' => false,
+				'error' => $e->getMessage(),
+				'code' => $e->getCode(),
+				'file' => basename($e->getFile()),
+				'line' => $e->getLine(),
+				'trace' => $e->getTrace(),
+			], JSON_PRETTY_PRINT) . '</pre>';
 	}
-	private function runCallback(callable|array $callback,$arguments = []){
-		$data = call_user_func($callback,$arguments);
+	
+	/**
+	 * Executes a callback function with the provided arguments.
+	 *
+	 * @param callable|array $callback The callback function to execute.
+	 * @param array $arguments The arguments to pass to the callback.
+	 */
+	private function runCallback(callable|array $callback, $arguments = []) {
+		call_user_func($callback, $arguments);
 	}
-
-
-	/*private function getPageByRegex(?string $needle = null): bool | object{
-		if (empty($this->pages)) {
-			return false;
-		}
-		$needle = $needle??$this->request;
-		foreach($this->pages as  $page){ 
-			$regex = $page->getRegex();
-			if(preg_match($regex,$needle,$matches)){
-				$page->setRegexVariables($matches);
-				return  $page;
-			}
-		}
-		return false;
-	}*/
+	
+	/**
+	 * Retrieves a page by matching a regex pattern.
+	 *
+	 * @param string|null $needle The request URI to match against.
+	 * @return bool|object The matched page or false if none found.
+	 */
 	private function getPageByRegex(?string $needle = null): bool | object {
 		if (empty($this->pages)) {
 			return false;
@@ -112,12 +165,19 @@ class PageManager {
 	
 		if (!empty($matchedPage)) {
 			$page = reset($matchedPage);
-			preg_match($matchedPage->getRegex(), $needle, $matches)
+			preg_match($page->getRegex(), $needle, $matches);
 			$page->setRegexVariables($matches);
 			return $page;
 		}
 		return false;
 	}
+	
+	/**
+	 * Retrieves a page by its slug.
+	 *
+	 * @param string $needle The slug to search for.
+	 * @return bool|object The matched page or false if none found.
+	 */
 	private function getPageBySlug($needle): bool | object {
 		foreach ($this->pages as $page) {
 			if ($page->getSlug() === $needle) {
@@ -126,23 +186,33 @@ class PageManager {
 		}
 		return false;
 	}
-
-	private function registerPage(Page $page){
+	
+	/**
+	 * Registers a new page.
+	 *
+	 * @param Page $page The page object to register.
+	 * @return Page The registered page.
+	 */
+	private function registerPage(Page $page) {
 		$this->pages[] = $page;
 		return $page;
 	}
+		
+	/**
+	 * Retrieves pages, optionally filtered by parent slug.
+	 *
+	 * @param string|null $parentSlug The parent slug to filter by.
+	 * @return array The filtered list of pages.
+	 */
 	public static function getPages(?string $parentSlug = null) {
 		$instance = self::getInstance();
 		$pages = $instance->pages;
-	
 		if ($parentSlug) {
 			$pages = array_filter($pages, fn($page) => $page->parentSlug === $parentSlug);
 		}
-	
 		usort($pages, function ($a, $b) {
 			return $a->priority <=> $b->priority;
 		});
-	
 		return $pages;
 	}
 	private function getParent(?string $slug = null): bool | array{
@@ -169,18 +239,6 @@ class PageManager {
 	
 		return $breadCrumbsArray;
 	}
-	/*private function breadcrumbs(?string $slug = null): bool | array{
-		$breadCrumbsArray = [];
-		if(is_null($slug)){
-			return false;
-		}
-		do{
-			$parent = $this->getParent($slug); 
-			$slug = $parent->parentSlug;
-			array_unshift($breadCrumbsArray,$parent);
-		}while($this->getParent($slug) != false);
-		return $breadCrumbsArray;
-	}*/
 	private function currentPage(): bool | object{
 		$this->currentPage = $this->getPageByRegex($this->request);
 		return $this->currentPage;
@@ -192,7 +250,7 @@ class PageManager {
 		return self::getInstance()->request;
 	}
 	static function current(): bool | object{
-		return self::getInstance()->getPageByRegex();
+		return self::getInstance()->currentPage();
 	}
 	static function run(){
 		return self::getInstance()->runPages();
@@ -235,7 +293,7 @@ class PageManager {
 		bool 			$inMenu 			= false
 	) {
 
-		return self::getInstance()->registerPage(new Page(
+		return self::addPage(
 			title: 				$title,
 			menuTitle: 			$menuTitle,
 			capability: 		$capability,
@@ -246,7 +304,7 @@ class PageManager {
 			priority: 			$priority,
 			inMenu: 			$inMenu,
 			parentSlug: 		$parentSlug
-		));
+		);
 	}
 
 	static function getSubPages(string $parentSlug){
@@ -262,7 +320,7 @@ class PageManager {
 						$arguments 			= null,
 		?int 			$priority = null 
 	){
-		return self::getInstance()->registerPage(new Page(
+		return self::addPage(
 			title: 				$title,
 			menuTitle: 			$menuTitle,
 			capability: 		$capability,
@@ -273,7 +331,7 @@ class PageManager {
 			priority: 			$priority,
 			inMenu: 			true,
 			parentSlug: 		$parentSlug
-		));
+		);
 	}
 	static function addSubmenuPage(
 		string 			$parentSlug, 
@@ -286,7 +344,7 @@ class PageManager {
 						$arguments 			= null,
 		?int 			$priority= null
 	){
-		return self::getInstance()->registerPage(new Page(
+		return self::addPage(
 			title: 				$title,
 			menuTitle: 			$menuTitle,
 			capability: 		$capability,
@@ -297,7 +355,7 @@ class PageManager {
 			priority: 			$priority,
 			inMenu: 			true,
 			parentSlug: 		$parentSlug
-		));
+		);
 	}
 	static function checkCapability($capability){
 		if(is_callable(self::getInstance()->capabilityCallback)){
@@ -305,7 +363,7 @@ class PageManager {
 		}
 		return true;
 	}
-	static function getMenu($parentSlug = '') {    
+	static function getMenu($parentSlug = '') {	
 		$pages 		= self::getPages('');
 		$matches 	= array_filter($pages, fn($page) => $page->parentSlug === $parentSlug);
 	
