@@ -3,11 +3,10 @@ namespace FriendlyURL;
 
 class PageManager {
 
-		/**
+	/**
 	 * @var array List of registered pages.
 	 */
 	private array $pages = [];
-	
 	/**
 	 * @var self|null Singleton instance.
 	 */
