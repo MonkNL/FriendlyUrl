@@ -1,130 +1,336 @@
 <?php
 namespace FriendlyURL;
-Class Page{
-	private 	$title, 
-		$menuTitle, 
-		$capability,  
-		$slug 				= '',
-		$callback 			= null,
-		$argumentsCallback 	= null,
-		$arguments 			= null,
-		$priority 			= 10,
-		$inMenu 			= false,
-		$subPages 			= [],
-		$parentSlug 		= null,
-		$regexVariables 	= [],
-		$regex				='',
-		$parent 			= null;	 
+
+class PageManager {
+
+	private array $pages 		= [];
+	private static ?self $instance = null;
+	private bool $ran = false;
+	private $request;
+	private $currentPage 		= null;
+	private $modules 			= [];
+	private $capabilityCallback = null;
 	
-	public function __construct(
-			string 			$title, 
-			string 			$menuTitle, 
-			array|string 	$capability, 
-			string 			$slug, 
-							$callback = null, 
-							$argumentsCallback 	= null,
-							$arguments 			= null,
-			?int 			$priority = 10,
-			bool 			$inMenu = false,
-			?string 		$parentSlug = null
-		) {
-		$this->setTitle($title); 
-		$this->setmenuTitle($menuTitle); 
-		$this->setcapability($capability); 
-		$this->setSlug($slug);
-		$this->setCallback($callback); 
-		$this->setArgumentsCallback($argumentsCallback);
-		$this->setArguments($arguments);
-		$this->setPriority($priority);
-		$this->setInMenu($inMenu);
-		$this->setParentSlug($parentSlug);
+
+	/**
+     * Private constructor to enforce singleton pattern.
+     */
+    private function __construct() {
+		$this->modules_autoload();
+		$this->request  	= substr(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH),1);
+		$this->currentPage	= $this->getPageByRegex($this->request);
 	}
-	public function setTitle(string $title): void{
-		$this->title = $title;
+	public 			function __wakeup(){}
+	
+	/**
+     * Returns the singleton instance.
+     *
+     * @return self The singleton instance.
+     */
+    public static function getInstance(): self {
+        if (self::$instance === null) {
+            self::$instance = new self();
+        }
+		return self::$instance;
+    }
+	private 		function getRequest(): string{
+		return $this->request;
 	}
-	public function getTitle():string{
-		return $this->title;
+
+	private 		function modules_autoload(): void{ // auto load all route modules, dir and constructor need to have the same name
+		foreach(glob('modules/**/') as $dir){
+	
+			$module = basename($dir);
+			if(file_exists($dir.$module.'.php')){
+				include_once($dir.$module.'.php');
+				$this->modules[] = $module;
+				
+			}
+		}
 	}
-	public function setMenuTitle(string $title): void{
-		$this->menuTitle = $title;
+	function __destruct(){
+		if(!$this->ran){
+			$this->runPages();
+		}
 	}
-	public function getMenuTitle():string{
-		return $this->menuTitle;
+	private function runPages(){
+		$this->ran =  true;
+		try{
+		
+			if(!($page = $this->getPageByRegex($this->request))){
+				throw new \Exception('404');
+
+			}
+			if($page->getArguments()){
+				$arguments = $page->getArguments();
+			}
+			if(is_callable($page->getArgumentsCallback())){
+				$arguments = call_user_func($page->getArgumentsCallback());
+			}
+			$this->runCallback($page->getCallback(),$arguments??[]);
+		}catch(\Exception $e){
+				$this->return_error($e);
+		}
 	}
-	public function setCapability(string|array $capability): void{
-		$this->capability = $capability;
+	private function return_error($e){
+		echo json_encode([
+				'success' 				=> false,
+				'error'   				=> $e->getMessage(),
+				'code'					=> $e->getCode(),
+				'file'					=> basename($e->getFile()),
+				'line'					=> $e->getLine(),
+				'trace'					=> $e->getTrace(),
+				],JSON_PRETTY_PRINT);
 	}
-	public function getCapability(): array|string{
-		return $this->capability;
+	private function runCallback(callable|array $callback,$arguments = []){
+		$data = call_user_func($callback,$arguments);
 	}
-	public function setSlug(string $slug): void{
-		$this->slug = $slug;
-		$slug 		= (substr($slug,-1)=='/'?substr($slug,0,-1):$slug);
-		$regex		= '/^'.str_replace('/','\/',$slug).'\/?$/'; // ^ = start, $ = end, \/? = 0 or 1 /
-		$this->setRegex($regex);
+
+
+	/*private function getPageByRegex(?string $needle = null): bool | object{
+		if (empty($this->pages)) {
+			return false;
+		}
+		$needle = $needle??$this->request;
+		foreach($this->pages as  $page){ 
+			$regex = $page->getRegex();
+			if(preg_match($regex,$needle,$matches)){
+				$page->setRegexVariables($matches);
+				return  $page;
+			}
+		}
+		return false;
+	}*/
+	private function getPageByRegex(?string $needle = null): bool | object {
+		if (empty($this->pages)) {
+			return false;
+		}
+		$needle = $needle ?? $this->request;
+		$matchedPage = array_filter($this->pages, function ($page) use ($needle) {
+			return preg_match($page->getRegex(), $needle, $matches);
+		});
+	
+		if (!empty($matchedPage)) {
+			$page = reset($matchedPage);
+			$page->setRegexVariables($matches);
+			return $page;
+		}
+		return false;
 	}
-	public function getSlug(): string{
-		return $this->slug;
+	private function getPageBySlug($needle): bool | object {
+		foreach ($this->pages as $page) {
+			if ($page->getSlug() === $needle) {
+				return $page;
+			}
+		}
+		return false;
 	}
-	private function setRegex(string $regex): void{
-		$this->regex = $regex;
+
+	private function registerPage(Page $page){
+		$this->pages[] = $page;
+		return $page;
 	}
-	public function getRegex(): string {
-		return $this->regex;
+	public static function getPages(?string $parentSlug = null) {
+		$instance = self::getInstance();
+		$pages = $instance->pages;
+	
+		if ($parentSlug) {
+			$pages = array_filter($pages, fn($page) => $page->parentSlug === $parentSlug);
+		}
+	
+		usort($pages, function ($a, $b) {
+			return $a->priority <=> $b->priority;
+		});
+	
+		return $pages;
 	}
-	public function setCallback($callback){
-		$this->callback = $callback;
+	private function getParent(?string $slug = null): bool | array{
+		if(is_null($slug)){
+			return false;
+		}
+		if(($parent = $this->getPageBySlug($slug)) == false){
+			return false;
+		}
+		return $parent;
 	}
-	public function getCallback(){
-		return $this->callback;
+	private function breadcrumbs(?string $slug = null,int $maxdept = 3): bool | array {
+		if (is_null($slug)) {
+			return false;
+		}
+	
+		$breadCrumbsArray = [];
+		$dept 	= 0;
+		while ($parent = $this->getParent($slug)) {
+			if($dept++ > $maxdept){ 	break;	}
+			array_unshift($breadCrumbsArray, $parent);
+			$slug = $parent->parentSlug;
+		}
+	
+		return $breadCrumbsArray;
 	}
-	public function setArgumentsCallback($argumentsCallback){
-		$this->argumentsCallback = $argumentsCallback;
+	/*private function breadcrumbs(?string $slug = null): bool | array{
+		$breadCrumbsArray = [];
+		if(is_null($slug)){
+			return false;
+		}
+		do{
+			$parent = $this->getParent($slug); 
+			$slug = $parent->parentSlug;
+			array_unshift($breadCrumbsArray,$parent);
+		}while($this->getParent($slug) != false);
+		return $breadCrumbsArray;
+	}*/
+	private function currentPage(): bool | object{
+		$this->currentPage = $this->getPageByRegex($this->request);
+		return $this->currentPage;
 	}
-	public function getArgumentsCallback(){
-		return $this->argumentsCallback;
+	static function getBreadCrumbs(?string $slug = null){
+		return self::getInstance()->breadCrumbs($slug);
 	}
-	public function setArguments($arguments){
-		$this->arguments = $arguments;
+	static function request(){
+		return self::getInstance()->request;
 	}
-	public function getArguments(){
-		return $this->arguments;
+	static function current(): bool | object{
+		return self::getInstance()->getPageByRegex();
 	}
-	public function setPriority(?int $priority){
-		$this->priority		= $priority;
+	static function run(){
+		return self::getInstance()->runPages();
 	}
-	public function getPriority() :?int{
-		return $this->priority;
+	static function addPage(
+		string 			$title,
+		string 			$menuTitle,
+		array|string	$capability,
+		string 			$slug,
+						$callback = null,
+						$argumentsCallback = null,
+						$arguments = null,
+		int|float 		$priority = null,
+		bool 			$inMenu = false,
+		string 			$parentSlug = ''
+	) {
+		return self::getInstance()->registerPage(new Page(
+			title: 				$title,
+			menuTitle: 			$menuTitle,
+			capability: 		$capability,
+			slug: 				$slug,
+			callback: 			$callback,
+			argumentsCallback: 	$argumentsCallback,
+			arguments:			$arguments,
+			priority: 			$priority,
+			inMenu: 			$inMenu,
+			parentSlug: 		$parentSlug
+		));
 	}
-	public function setInMenu(bool $inMenu){
-		$this->inMenu		= $inMenu;
+	static function addSubPage(
+		string 			$parentSlug,
+		string 			$title,
+		string 			$menuTitle,
+		array|string 	$capability,
+		string 			$slug,
+						$callback 			= null,
+						$argumentsCallback 	= null,
+						$arguments 			= null,
+		int|float 		$priority 			= null,
+		bool 			$inMenu 			= false
+	) {
+
+		return self::getInstance()->registerPage(new Page(
+			title: 				$title,
+			menuTitle: 			$menuTitle,
+			capability: 		$capability,
+			slug: 				$slug,
+			callback: 			$callback,
+			argumentsCallback: 	$argumentsCallback,
+			arguments:			$arguments,
+			priority: 			$priority,
+			inMenu: 			$inMenu,
+			parentSlug: 		$parentSlug
+		));
 	}
-	public function getInMenu(): bool{
-		return $this->inMenu;
+
+	static function getSubPages(string $parentSlug){
+		return self::getPages($parentSlug);
 	}
-	public function setparentSlug(?string $slug):void{
-		$this->parentSlug 	= $slug;
+	static function addMenuPage(
+		string 			$title, 
+		string 			$menuTitle, 
+		array|string 	$capability, 
+		string 			$slug, 
+						$callback 			= null,
+						$argumentsCallback 	= null,
+						$arguments 			= null,
+		?int 			$priority = null 
+	){
+		return self::getInstance()->registerPage(new Page(
+			title: 				$title,
+			menuTitle: 			$menuTitle,
+			capability: 		$capability,
+			slug: 				$slug,
+			callback: 			$callback,
+			argumentsCallback: 	$argumentsCallback,
+			arguments:			$arguments,
+			priority: 			$priority,
+			inMenu: 			true,
+			parentSlug: 		$parentSlug
+		));
 	}
-	public function getparentSlug():?string{
-		return $this->parentSlug;
+	static function addSubmenuPage(
+		string 			$parentSlug, 
+		string 			$title, 
+		string 			$menuTitle, 
+		array|string 	$capability, 
+		string 			$slug, 
+						$callback 			= null,
+						$argumentsCallback 	= null,
+						$arguments 			= null,
+		?int 			$priority= null
+	){
+		return self::getInstance()->registerPage(new Page(
+			title: 				$title,
+			menuTitle: 			$menuTitle,
+			capability: 		$capability,
+			slug: 				$slug,
+			callback: 			$callback,
+			argumentsCallback: 	$argumentsCallback,
+			arguments:			$arguments,
+			priority: 			$priority,
+			inMenu: 			true,
+			parentSlug: 		$parentSlug
+		));
 	}
-	public function setRegexvariables($matches){
-		$this->regexVariables = $matches;
+	static function checkCapability($capability){
+		if(is_callable(self::getInstance()->capabilityCallback)){
+			call_user_func_array((array)self::getInstance()->capabilityCallback,$capability);
+		}
+		return true;
 	}
-	public function getRegexvariables(){
-		return $this->regexVariables;
+	static function getMenu($parentSlug = '') {    
+		$pages 		= self::getPages('');
+		$matches 	= array_filter($pages, fn($page) => $page->parentSlug === $parentSlug);
+	
+		if (empty($pages)) {
+			return [];
+		}
+	
+		$menu = [];
+		foreach ($pages as $page) {
+			if (!$page->inMenu) {
+				continue;
+			}
+			if (is_array($page->capability) && !self::checkCapability($page->capability)) {
+				continue;
+			}
+			$subMenu = [];
+			if (!empty($page->slug)) { 
+				$subMenu = self::get_menu($page->slug);
+			}
+			$page->childPages = $subMenu;
+			$menu[] = $page;
+		}
+		return $menu;
 	}
-	public function regexSprintF(){
-		return preg_replace('/(\(.*\))/U', '%s', $this->slug);
-	}
-	public function getSubPages(){
-		return $this->childPages;
-	}
-	public function getSubMenu(){
-		$subMenu = array_filter($this->childPages,fn($a) => $a->inMenu==true);
-		return $subMenu;
-	}
-	public function hasSubPages() :bool{
-		return !empty($this->getSubMenu());
-	}
+	
 }
+
+
+
