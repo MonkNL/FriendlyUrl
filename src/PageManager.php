@@ -112,6 +112,7 @@ class PageManager {
 	
 		if (!empty($matchedPage)) {
 			$page = reset($matchedPage);
+			preg_match($matchedPage->getRegex(), $needle, $matches)
 			$page->setRegexVariables($matches);
 			return $page;
 		}
