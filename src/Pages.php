@@ -333,7 +333,7 @@ class PageManager {
 		));
 	}
 	static function checkCapability($capability){
-		if(callable(self::getInstance()->capabilityCallback)){
+		if(is_callable(self::getInstance()->capabilityCallback)){
 			call_user_func_array((array)self::getInstance()->capabilityCallback,$capability);
 		}
 		return true;
